@@ -1,0 +1,12 @@
+{
+  "name": "mern-socialmedia-back",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "cd server && npm start && cd .. && cd socket npm start"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
