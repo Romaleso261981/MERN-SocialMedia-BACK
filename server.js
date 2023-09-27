@@ -78,6 +78,11 @@ io.on('connection', socket => {
 		// send all active users to new user
 		io.emit('get-users', activeUsers)
 	})
+	socket.on('get-curent-chatRoom', async chat_id => {
+
+		console.log('get-curent-chatRoom', chat_id)
+		io.emit('get-chatRoom', chat_id)
+	})
 
 	socket.on('disconnect', () => {
 		// remove user from active users
@@ -93,7 +98,8 @@ io.on('connection', socket => {
 		// console.log(senderId, text)
 		console.log('data', data)
 
-		socket.emit('receive-message', data)
+		// socket.emit('receive-message', data)
+		socket.broadcast.emit('receive-message', data);
 		// const user = activeUsers.find((user) => user.userId === senderId);
 
 		// if (user) {
