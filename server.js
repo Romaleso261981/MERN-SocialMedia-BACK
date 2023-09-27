@@ -26,7 +26,7 @@ app.use(bodyParser.urlencoded({ limit: '30mb', extended: true }))
 app.use(
 	cors({
 		origin: 'https://our-chat-my.netlify.app',
-		optionsSuccessStatus: 200
+		optionsSuccessStatus: 200,
 	})
 )
 app.use(express.static('public'))
@@ -46,7 +46,8 @@ const CONNECTION = process.env.MONGODB_CONNECTION
 const httpServer = http.createServer(app)
 const io = new Server(httpServer, {
 	cors: {
-		origin: 'http://localhost:3000', // або ваш дозволений origin
+		origin: 'https://our-chat-my.netlify.app',
+		optionsSuccessStatus: 200,
 	},
 })
 
