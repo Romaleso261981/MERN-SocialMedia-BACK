@@ -27,7 +27,7 @@ app.use(cors())
 app.use(express.static('public'))
 app.use('/images', express.static('images'))
 
-app.use('/auth', AuthRoute);
+app.use('/auth', AuthRoute)
 app.use('/user', UserRoute)
 app.use('/posts', PostRoute)
 app.use('/upload', UploadRoute)
@@ -66,7 +66,7 @@ io.on('connection', socket => {
 			}
 			user.socketId = socket.id
 			const newUser = await user.save()
-			console.log('newUser',newUser)
+			console.log('newUser', newUser)
 		}
 
 		// send all active users to new user
@@ -83,13 +83,16 @@ io.on('connection', socket => {
 
 	// send message to a specific user
 	socket.on('send-message', data => {
-		const { text, senderId, chatId } = data
-		const user = activeUsers.find((user) => user.userId === senderId);
-		console.log('Sending from socket to :', text)
+		// const { text, senderId, chatId } = data
+		// console.log(senderId, text)
+		console.log('data',data)
 
-		if (user) {
-		  io.to(user.socketId).emit("recieve-message", data);
-		}
+		socket.emit('receive-message', data)
+		// const user = activeUsers.find((user) => user.userId === senderId);
+
+		// if (user) {
+		//   io.to(user.socketId).emit("recieve-message", data);
+		// }
 	})
 })
 

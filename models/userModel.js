@@ -47,9 +47,12 @@ import mongoose from 'mongoose'
 
 const userSchema = new mongoose.Schema(
 	{
-		username: {
+		userName: {
 			type: String,
 			default: '',
+		},
+		userMood: {
+			type: Number,
 		},
 		password: {
 			type: String,
