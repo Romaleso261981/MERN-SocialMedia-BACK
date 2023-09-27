@@ -23,12 +23,12 @@ const app = express()
 // Set up the express application
 app.use(bodyParser.json({ limit: '30mb', extended: true }))
 app.use(bodyParser.urlencoded({ limit: '30mb', extended: true }))
-app.use(cors(
-	{
-		origin: 'http://localhost:5000, https://our-chat-my.netlify.app',
-		credentials: true,
-	}
-))
+app.use(
+	cors({
+		origin: 'https://our-chat-my.netlify.app',
+		optionsSuccessStatus: 200
+	})
+)
 app.use(express.static('public'))
 app.use('/images', express.static('images'))
 
@@ -90,7 +90,7 @@ io.on('connection', socket => {
 	socket.on('send-message', data => {
 		// const { text, senderId, chatId } = data
 		// console.log(senderId, text)
-		console.log('data',data)
+		console.log('data', data)
 
 		socket.emit('receive-message', data)
 		// const user = activeUsers.find((user) => user.userId === senderId);
