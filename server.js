@@ -59,9 +59,7 @@ io.on('connection', socket => {
 		}
 
 		if (user_id != null && Boolean(user_id)) {
-			console.log('user_id', user_id)
 			const user = await User.findById(user_id)
-			console.log('user findById', user)
 			if (!user) {
 				console.error('User does not exist.')
 				return
@@ -86,8 +84,9 @@ io.on('connection', socket => {
 	// send message to a specific user
 	socket.on('send-message', data => {
 		const { text, senderId, chatId } = data
-		const user = activeUsers.find((user) => user.userId === receiverId);
+		const user = activeUsers.find((user) => user.userId === senderId);
 		console.log('Sending from socket to :', text)
+
 		if (user) {
 		  io.to(user.socketId).emit("recieve-message", data);
 		}
