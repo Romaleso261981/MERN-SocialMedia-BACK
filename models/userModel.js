@@ -1,39 +1,89 @@
-import mongoose from "mongoose";
+// import mongoose from "mongoose";
 
-const UserSchema = mongoose.Schema(
-  {
-    username: {
-      type: String,
-      required: true,
-    },
-    password: {
-      type: String,
-      required: true,
-    },
-    firstname: {
-      type: String,
-      required: true,
-    },
-    lastname: {
-      type: String,
-      required: true,
-    },
-    isAdmin: {
-      type: Boolean,
-      default: false,
-    },
-   profilePicture: String,
-    coverPicture: String,
-    about: String,
-    livesIn: String,
-    worksAt: String,
-    relationship: String,
-    country: String,
-    followers: [],
-    following: [],
-  },
-  { timestamps: true }
-);
+// const UserSchema = mongoose.Schema(
+//   {
+//     username: {
+//       type: String,
+//       default: '',
+//     },
+//     password: {
+//       type: String,
+//       default: '',
+//     },
+//     firstname: {
+//       type: String,
+//       default: '',
+//     },
+//     lastname: {
+//       type: String,
+//       default: '',
+//     },
+//     socketId: {
+//       type: String,
+//       default: null,
+//     },
+//     isAdmin: {
+//       type: Boolean,
+//       default: false,
+//     },
+//    profilePicture: String,
+//     coverPicture: String,
+//     about: String,
+//     livesIn: String,
+//     worksAt: String,
+//     relationship: String,
+//     country: String,
+//     followers: [],
+//     following: [],
+//   },
+//   { timestamps: true }
+// );
 
-const UserModel = mongoose.model("Users", UserSchema);
-export default UserModel;
+// const UserModel = new mongoose.model("User", UserSchema);
+
+// export default UserModel;
+
+import mongoose from 'mongoose'
+
+const userSchema = new mongoose.Schema(
+	{
+		username: {
+			type: String,
+			default: '',
+		},
+		password: {
+			type: String,
+			default: '',
+		},
+		firstname: {
+			type: String,
+			default: '',
+		},
+		lastname: {
+			type: String,
+			default: '',
+		},
+		socketId: {
+			type: String,
+			default: null,
+		},
+		isAdmin: {
+			type: Boolean,
+			default: false,
+		},
+		profilePicture: String,
+		coverPicture: String,
+		about: String,
+		livesIn: String,
+		worksAt: String,
+		relationship: String,
+		country: String,
+		followers: [],
+		following: [],
+	},
+	{ timestamps: true }
+)
+
+const User = new mongoose.model('User', userSchema)
+
+export default User;
