@@ -26,6 +26,7 @@ app.use(bodyParser.urlencoded({ limit: '30mb', extended: true }))
 app.use(
 	cors({
 		origin: 'https://our-chat-my.netlify.app',
+		// origin: 'http://localhost:3000',
 		optionsSuccessStatus: 200,
 	})
 )
@@ -47,6 +48,7 @@ const httpServer = http.createServer(app)
 const io = new Server(httpServer, {
 	cors: {
 		origin: 'https://our-chat-my.netlify.app',
+		// origin: 'http://localhost:3000',
 		optionsSuccessStatus: 200,
 	},
 })
@@ -79,7 +81,6 @@ io.on('connection', socket => {
 		io.emit('get-users', activeUsers)
 	})
 	socket.on('get-curent-chatRoom', async chat_id => {
-
 		console.log('get-curent-chatRoom', chat_id)
 		io.emit('get-chatRoom', chat_id)
 	})
@@ -99,12 +100,14 @@ io.on('connection', socket => {
 		console.log('data', data)
 
 		// socket.emit('receive-message', data)
-		socket.broadcast.emit('receive-message', data);
-		// const user = activeUsers.find((user) => user.userId === senderId);
-
-		// if (user) {
-		//   io.to(user.socketId).emit("recieve-message", data);
-		// }
+		// socket.broadcast.emit('receive-message', data);
+		// socket.emit('receive-message', data);
+		const { senderId } = data
+		const user = activeUsers.find(user => user.userId === senderId)
+		activeUsers.forEach(element => {
+			console.log('element', element)
+			io.to(element.socketId).emit('receive-message', data)
+		})
 	})
 })
 
