@@ -6,6 +6,7 @@ import mongoose from 'mongoose'
 import { Server } from 'socket.io'
 import http from 'http'
 import User from './models/userModel.js'
+import ChatModel from './models/chatModel.js'
 
 // routes
 import AuthRoute from './routes/AuthRoute.js'
@@ -17,6 +18,7 @@ import MessageRoute from './routes/MessageRoute.js'
 
 dotenv.config()
 const app = express()
+const URL = process.env.URL_ORIGIN || 'https://chat-ws-back-production.up.railway.app'
 
 // ... (використання middleware)
 
@@ -25,8 +27,7 @@ app.use(bodyParser.json({ limit: '30mb', extended: true }))
 app.use(bodyParser.urlencoded({ limit: '30mb', extended: true }))
 app.use(
 	cors({
-		origin: 'https://our-chat-my.netlify.app',
-		// origin: 'http://localhost:3000',
+		origin: URL,
 		optionsSuccessStatus: 200,
 	})
 )
@@ -47,8 +48,7 @@ const CONNECTION = process.env.MONGODB_CONNECTION
 const httpServer = http.createServer(app)
 const io = new Server(httpServer, {
 	cors: {
-		origin: 'https://our-chat-my.netlify.app',
-		// origin: 'http://localhost:3000',
+		origin: URL,
 		optionsSuccessStatus: 200,
 	},
 })
@@ -74,39 +74,68 @@ io.on('connection', socket => {
 			}
 			user.socketId = socket.id
 			const newUser = await user.save()
-			console.log('newUser', newUser)
 		}
 
-		// send all active users to new user
 		io.emit('get-users', activeUsers)
 	})
 	socket.on('get-curent-chatRoom', async chat_id => {
 		console.log('get-curent-chatRoom', chat_id)
-		io.emit('get-chatRoom', chat_id)
+
+		let newChatRoom = null
+		if (chat_id === 'undefined' && chat_id === 'null') {
+			console.error('chat_id is not defined')
+			return
+		}
+
+		try {
+			const chatRoom = await ChatModel.findById(chat_id)
+			newChatRoom = chatRoom
+			io.emit('get-chatRoom', newChatRoom)
+		} catch (error) {
+			console.error("Error while processing 'get-curent-chatRoom':", error)
+		}
+		if (!newChatRoom) {
+			try {
+				newChatRoom = new ChatModel({
+					members: [username, 'test'],
+				})
+				await newChatRoom.save()
+				io.emit('get-chatRoom', newChatRoom)
+			} catch (error) {
+				console.error("Error while processing 'get-curent-chatRoom':", error)
+			}
+		}
 	})
 
 	socket.on('disconnect', () => {
-		// remove user from active users
 		activeUsers = activeUsers.filter(user => user.socketId !== socket.id)
 		console.log('User Disconnected', activeUsers)
-		// send all active users to all users
 		io.emit('get-users', activeUsers)
 	})
 
-	// send message to a specific user
-	socket.on('send-message', data => {
-		// const { text, senderId, chatId } = data
-		// console.log(senderId, text)
-		console.log('data', data)
+	socket.on('send-message', async ({ text, senderId, chatId }) => {
+		console.log(senderId, text)
+
+		try {
+			const chatRoom = await ChatModel.findById(chatId)
+			console.log('chatRoom', chatRoom)
+
+			if (chatRoom) {
+				chatRoom.messages.push({text, senderId, chatId})
+				await chatRoom.save()
+			}
+		} catch (error) {
+			console.error("Error while processing 'get-curent-chatRoom':", error)
+		}
 
 		// socket.emit('receive-message', data)
 		// socket.broadcast.emit('receive-message', data);
 		// socket.emit('receive-message', data);
-		const { senderId } = data
+
 		const user = activeUsers.find(user => user.userId === senderId)
 		activeUsers.forEach(element => {
 			console.log('element', element)
-			io.to(element.socketId).emit('receive-message', data)
+			io.to(element.socketId).emit('receive-message', { text, senderId, chatId })
 		})
 	})
 })
