@@ -18,7 +18,7 @@ import MessageRoute from './routes/MessageRoute.js'
 
 dotenv.config()
 const app = express()
-const URL = process.env.URL_ORIGIN || 'https://chat-ws-back-production.up.railway.app'
+// const URL = process.env.URL_ORIGIN || 'https://chat-ws-back-production.up.railway.app'
 
 // ... (використання middleware)
 
@@ -27,7 +27,7 @@ app.use(bodyParser.json({ limit: '30mb', extended: true }))
 app.use(bodyParser.urlencoded({ limit: '30mb', extended: true }))
 app.use(
 	cors({
-		origin: URL,
+		origin: 'https://chat-ws-back-production.up.railway.app',
 		optionsSuccessStatus: 200,
 	})
 )
@@ -48,7 +48,7 @@ const CONNECTION = process.env.MONGODB_CONNECTION
 const httpServer = http.createServer(app)
 const io = new Server(httpServer, {
 	cors: {
-		origin: URL,
+		origin: 'https://chat-ws-back-production.up.railway.app',
 		optionsSuccessStatus: 200,
 	},
 })
