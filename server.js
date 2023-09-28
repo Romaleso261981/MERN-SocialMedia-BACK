@@ -143,6 +143,6 @@ io.on('connection', socket => {
 mongoose
 	.connect(CONNECTION, { useNewUrlParser: true, useUnifiedTopology: true })
 	.then(() => {
-		httpServer.listen(PORT, () => console.log(`Listening at Port ${PORT}... URL ${URL}`))
+		httpServer.listen(PORT, () => console.log(`Listening at Port ${PORT}`))
 	})
 	.catch(error => console.log(`${error} did not connect`))
