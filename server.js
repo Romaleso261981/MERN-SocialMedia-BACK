@@ -64,15 +64,15 @@ io.on('connection', socket => {
 			console.log('New User Connected', activeUsers)
 		}
 
-		if (user_id != null && Boolean(user_id)) {
-			const user = await User.findById(user_id)
-			if (!user) {
-				console.error('User does not exist.')
-				return
-			}
-			user.socketId = socket.id
-			const newUser = await user.save()
-		}
+		// if (user_id != null && Boolean(user_id)) {
+		// 	const user = await User.findById(user_id)
+		// 	if (!user) {
+		// 		console.error('User does not exist.')
+		// 		return
+		// 	}
+		// 	user.socketId = socket.id
+		// 	const newUser = await user.save()
+		// }
 
 		io.emit('get-users', activeUsers)
 	})
