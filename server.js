@@ -25,7 +25,7 @@ app.use(bodyParser.json({ limit: '30mb', extended: true }))
 app.use(bodyParser.urlencoded({ limit: '30mb', extended: true }))
 app.use(
 	cors({
-		origin: '*',
+		origin: ['https://our-chat-my.netlify.app', 'http://localhost:3000'],
 		optionsSuccessStatus: 200,
 	})
 )
@@ -46,7 +46,7 @@ const CONNECTION = process.env.MONGODB_CONNECTION
 const httpServer = http.createServer(app)
 const io = new Server(httpServer, {
 	cors: {
-		origin: '*',
+		origin: ['https://our-chat-my.netlify.app', 'http://localhost:3000'],
 		optionsSuccessStatus: 200,
 	},
 })
@@ -64,45 +64,45 @@ io.on('connection', socket => {
 			console.log('New User Connected', activeUsers)
 		}
 
-		// if (user_id != null && Boolean(user_id)) {
-		// 	const user = await User.findById(user_id)
-		// 	if (!user) {
-		// 		console.error('User does not exist.')
-		// 		return
-		// 	}
-		// 	user.socketId = socket.id
-		// 	const newUser = await user.save()
-		// }
+		if (user_id != null && Boolean(user_id)) {
+			const user = await User.findById(user_id)
+			if (!user) {
+				console.error('User does not exist.')
+				return
+			}
+			user.socketId = socket.id
+			const newUser = await user.save()
+		}
 
 		io.emit('get-users', activeUsers)
 	})
-	socket.on('get-curent-chatRoom', async chatName => {
-		console.log('get-curent-chatRoom', chatName)
+	socket.on('get-curent-chatRoom', async chat_id => {
+		console.log('get-curent-chatRoom', chat_id)
 
-		// let newChatRoom = null
-		// if (chat_id === 'undefined' && chat_id === 'null') {
-		// 	console.error('chat_id is not defined')
-		// 	return
-		// }
+		let newChatRoom = null
+		if (chat_id === 'undefined' && chat_id === 'null') {
+			console.error('chat_id is not defined')
+			return
+		}
 
-		// try {
-		// 	const chatRoom = await ChatModel.findById(chat_id)
-		// 	newChatRoom = chatRoom
-		// 	io.emit('get-chatRoom', newChatRoom)
-		// } catch (error) {
-		// 	console.error("Error while processing 'get-curent-chatRoom':", error)
-		// }
-		// if (!newChatRoom) {
-		// 	try {
-		// 		newChatRoom = new ChatModel({
-		// 			members: [username, 'test'],
-		// 		})
-		// 		await newChatRoom.save()
-		// 		io.emit('get-chatRoom', newChatRoom)
-		// 	} catch (error) {
-		// 		console.error("Error while processing 'get-curent-chatRoom':", error)
-		// 	}
-		// }
+		try {
+			const chatRoom = await ChatModel.findById(chat_id)
+			newChatRoom = chatRoom
+			io.emit('get-chatRoom', newChatRoom)
+		} catch (error) {
+			console.error("Error while processing 'get-curent-chatRoom':", error)
+		}
+		if (!newChatRoom) {
+			try {
+				newChatRoom = new ChatModel({
+					members: [username, 'test'],
+				})
+				await newChatRoom.save()
+				io.emit('get-chatRoom', newChatRoom)
+			} catch (error) {
+				console.error("Error while processing 'get-curent-chatRoom':", error)
+			}
+		}
 	})
 
 	socket.on('disconnect', () => {
