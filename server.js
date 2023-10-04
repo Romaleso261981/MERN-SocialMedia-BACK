@@ -46,7 +46,7 @@ const CONNECTION = process.env.MONGODB_CONNECTION
 const httpServer = http.createServer(app)
 const io = new Server(httpServer, {
 	cors: {
-		origin: ['https://our-chat-my.netlify.app', 'http://localhost:3000'],
+		origin: '*',
 		optionsSuccessStatus: 200,
 	},
 })
@@ -76,33 +76,33 @@ io.on('connection', socket => {
 
 		io.emit('get-users', activeUsers)
 	})
-	socket.on('get-curent-chatRoom', async chat_id => {
-		console.log('get-curent-chatRoom', chat_id)
+	socket.on('get-curent-chatRoom', async chatName => {
+		console.log('get-curent-chatRoom', chatName)
 
-		let newChatRoom = null
-		if (chat_id === 'undefined' && chat_id === 'null') {
-			console.error('chat_id is not defined')
-			return
-		}
+		// let newChatRoom = null
+		// if (chat_id === 'undefined' && chat_id === 'null') {
+		// 	console.error('chat_id is not defined')
+		// 	return
+		// }
 
-		try {
-			const chatRoom = await ChatModel.findById(chat_id)
-			newChatRoom = chatRoom
-			io.emit('get-chatRoom', newChatRoom)
-		} catch (error) {
-			console.error("Error while processing 'get-curent-chatRoom':", error)
-		}
-		if (!newChatRoom) {
-			try {
-				newChatRoom = new ChatModel({
-					members: [username, 'test'],
-				})
-				await newChatRoom.save()
-				io.emit('get-chatRoom', newChatRoom)
-			} catch (error) {
-				console.error("Error while processing 'get-curent-chatRoom':", error)
-			}
-		}
+		// try {
+		// 	const chatRoom = await ChatModel.findById(chat_id)
+		// 	newChatRoom = chatRoom
+		// 	io.emit('get-chatRoom', newChatRoom)
+		// } catch (error) {
+		// 	console.error("Error while processing 'get-curent-chatRoom':", error)
+		// }
+		// if (!newChatRoom) {
+		// 	try {
+		// 		newChatRoom = new ChatModel({
+		// 			members: [username, 'test'],
+		// 		})
+		// 		await newChatRoom.save()
+		// 		io.emit('get-chatRoom', newChatRoom)
+		// 	} catch (error) {
+		// 		console.error("Error while processing 'get-curent-chatRoom':", error)
+		// 	}
+		// }
 	})
 
 	socket.on('disconnect', () => {
