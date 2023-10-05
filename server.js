@@ -52,11 +52,11 @@ const io = new Server(httpServer, {
 })
 
 let activeUsers = []
+let addedUserInCurrentChat = []
 const username = 'lesoRoman'
 
 io.on('connection', socket => {
-	console.log('connection')
-	// add new User
+	console.log('New User Connected', socket.id)
 	socket.on('new-user-add', async user_id => {
 		// if user is not added previously
 		if (!activeUsers.some(user => user.userId === user_id)) {
@@ -75,6 +75,11 @@ io.on('connection', socket => {
 		}
 
 		io.emit('get-users', activeUsers)
+	})
+
+	socket.on('add-user-in-curent-chatRoom', ({ userName }) => {
+		console.log('get-curent-chatRoom', userName)
+		io.emit('user-added-in-chatRoom', userName)
 	})
 	socket.on('get-curent-chatRoom', async chat_id => {
 		console.log('get-curent-chatRoom', chat_id)
@@ -111,7 +116,7 @@ io.on('connection', socket => {
 		io.emit('get-users', activeUsers)
 	})
 
-	socket.on('send-message', async ({ text, senderId, chatId }) => {
+	socket.on('send-message', async ({ text, senderId, chatId, userName, userMood }) => {
 		console.log(senderId, text)
 
 		try {
@@ -119,7 +124,7 @@ io.on('connection', socket => {
 			console.log('chatRoom', chatRoom)
 
 			if (chatRoom) {
-				chatRoom.messages.push({text, senderId, chatId})
+				chatRoom.messages.push({ text, senderId, chatId,userName, userMood, createdAt: Date.now() })
 				await chatRoom.save()
 			}
 		} catch (error) {
@@ -130,10 +135,10 @@ io.on('connection', socket => {
 		// socket.broadcast.emit('receive-message', data);
 		// socket.emit('receive-message', data);
 
-		const user = activeUsers.find(user => user.userId === senderId)
+		const upDatedChat = await ChatModel.findById(chatId)
 		activeUsers.forEach(element => {
-			console.log('element', element)
-			io.to(element.socketId).emit('receive-message', { text, senderId, chatId })
+			console.log('element', upDatedChat)
+			io.to(element.socketId).emit('receive-message', upDatedChat.messages[upDatedChat.messages.length - 1])
 		})
 	})
 })
