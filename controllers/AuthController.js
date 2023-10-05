@@ -23,6 +23,16 @@ export const Signup = async (req, res) => {
 }
 
 // Changed
+export const logOut = async (req, res) => {
+	const { userId } = req.body
+	console.log(userId)
+
+	try {
+		res.status(200).json(userId)
+	} catch (err) {
+		res.status(500).json(err)
+	}
+}
 export const loginUser = async (req, res) => {
 	const { username, password } = req.body
 
