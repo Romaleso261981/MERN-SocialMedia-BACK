@@ -110,12 +110,6 @@ io.on('connection', socket => {
 		}
 	})
 
-	socket.on('disconnect', () => {
-		activeUsers = activeUsers.filter(user => user.socketId !== socket.id)
-		console.log('User Disconnected', activeUsers)
-		io.emit('get-users', activeUsers)
-	})
-
 	socket.on('send-message', async ({ text, senderId, chatId, userName, userMood }) => {
 		console.log(senderId, text)
 
@@ -124,7 +118,7 @@ io.on('connection', socket => {
 			console.log('chatRoom', chatRoom)
 
 			if (chatRoom) {
-				chatRoom.messages.push({ text, senderId, chatId,userName, userMood, createdAt: Date.now() })
+				chatRoom.messages.push({ text, senderId, chatId, userName, userMood, createdAt: Date.now() })
 				await chatRoom.save()
 			}
 		} catch (error) {
@@ -140,6 +134,12 @@ io.on('connection', socket => {
 			console.log('element', upDatedChat)
 			io.to(element.socketId).emit('receive-message', upDatedChat.messages[upDatedChat.messages.length - 1])
 		})
+	})
+	
+	socket.on('disconnect', () => {
+		activeUsers = activeUsers.filter(user => user.socketId !== socket.id)
+		console.log('User Disconnected', activeUsers)
+		io.emit('get-users', activeUsers)
 	})
 })
 

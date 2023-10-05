@@ -1,6 +1,8 @@
 import UserModel from '../models/userModel.js'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
+import ChatModel from '../models/chatModel.js'
+import User from '../models/userModel.js'
 
 // Register new user
 export const Signup = async (req, res) => {
@@ -8,7 +10,6 @@ export const Signup = async (req, res) => {
 	try {
 		// addition new
 		const oldUser = await UserModel.findOne({ userName })
-    console.log(!!oldUser)
 
 		if (!!oldUser) return res.status(400).json({ message: 'userName must be unique' })
 
@@ -21,14 +22,16 @@ export const Signup = async (req, res) => {
 		res.status(500).json({ message: error.message })
 	}
 }
-
-// Changed
 export const logOut = async (req, res) => {
-	const { userId } = req.body
-	console.log(userId)
-
+	const { userId, chatId } = req.body
+	
+	const chatRoom = await ChatModel.findById(chatId)
+	console.log('chatRoom', chatRoom.members)
+	const result = await User.findByIdAndDelete({ _id: userId })
+	console.log('result', result)
+	
 	try {
-		res.status(200).json(userId)
+		res.status(200).json({ message: 'User logged out' })
 	} catch (err) {
 		res.status(500).json(err)
 	}
