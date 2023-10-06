@@ -24,10 +24,11 @@ export const Signup = async (req, res) => {
 }
 export const logOut = async (req, res) => {
 	const { userId, chatId } = req.body
+	console.log('userId',userId, 'chatId',chatId)
 
 	if (chatId) {
 		const chatRoom = await ChatModel.findById(chatId)
-		console.log('chatRoom', chatRoom.members)
+		console.log('chatRoom', chatRoom?.members)
 	}
 	
 	if(userId) {	
