@@ -24,12 +24,17 @@ export const Signup = async (req, res) => {
 }
 export const logOut = async (req, res) => {
 	const { userId, chatId } = req.body
+
+	if (chatId) {
+		const chatRoom = await ChatModel.findById(chatId)
+		console.log('chatRoom', chatRoom.members)
+	}
 	
-	const chatRoom = await ChatModel.findById(chatId)
-	console.log('chatRoom', chatRoom.members)
+	if(userId) {	
 	const result = await User.findByIdAndDelete({ _id: userId })
 	console.log('result', result)
-	
+	}
+
 	try {
 		res.status(200).json({ message: 'User logged out' })
 	} catch (err) {

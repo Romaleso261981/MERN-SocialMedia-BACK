@@ -64,19 +64,8 @@ io.on('connection', socket => {
 			console.log('New User Connected', activeUsers)
 		}
 
-		if (user_id != null && Boolean(user_id)) {
-			const user = await User.findById(user_id)
-			if (!user) {
-				console.error('User does not exist.')
-				return
-			}
-			user.socketId = socket.id
-			const newUser = await user.save()
-		}
-
 		io.emit('get-users', activeUsers)
 	})
-
 	socket.on('add-user-in-curent-chatRoom', ({ userName }) => {
 		console.log('get-curent-chatRoom', userName)
 		io.emit('user-added-in-chatRoom', userName)
@@ -84,32 +73,20 @@ io.on('connection', socket => {
 	socket.on('get-curent-chatRoom', async chat_id => {
 		console.log('get-curent-chatRoom', chat_id)
 
-		let newChatRoom = null
 		if (chat_id === 'undefined' && chat_id === 'null') {
 			console.error('chat_id is not defined')
 			return
 		}
 
 		try {
+			let newChatRoom = null
 			const chatRoom = await ChatModel.findById(chat_id)
 			newChatRoom = chatRoom
 			io.emit('get-chatRoom', newChatRoom)
 		} catch (error) {
 			console.error("Error while processing 'get-curent-chatRoom':", error)
 		}
-		if (!newChatRoom) {
-			try {
-				newChatRoom = new ChatModel({
-					members: [username, 'test'],
-				})
-				await newChatRoom.save()
-				io.emit('get-chatRoom', newChatRoom)
-			} catch (error) {
-				console.error("Error while processing 'get-curent-chatRoom':", error)
-			}
-		}
 	})
-
 	socket.on('send-message', async ({ text, senderId, chatId, userName, userMood }) => {
 		console.log(senderId, text)
 
@@ -135,7 +112,6 @@ io.on('connection', socket => {
 			io.to(element.socketId).emit('receive-message', upDatedChat.messages[upDatedChat.messages.length - 1])
 		})
 	})
-	
 	socket.on('disconnect', () => {
 		activeUsers = activeUsers.filter(user => user.socketId !== socket.id)
 		console.log('User Disconnected', activeUsers)
