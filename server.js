@@ -37,7 +37,6 @@ app.use('/images', express.static('images'))
 app.use('/auth', AuthRoute)
 app.use('/rooms', RoomsRoute)
 
-
 // Load environment variables
 const PORT = process.env.PORT || 3000
 const CONNECTION = process.env.MONGODB_CONNECTION
@@ -45,6 +44,7 @@ const CONNECTION = process.env.MONGODB_CONNECTION
 const httpServer = http.createServer(app)
 const io = new Server(httpServer, {
 	cors: {
+		origin: ['https://our-chat-my.netlify.app', 'http://localhost:3000', 'http://localhost:3001'],
 		optionsSuccessStatus: 200,
 	},
 })
@@ -52,7 +52,6 @@ const io = new Server(httpServer, {
 let activeUsers = []
 let addedUserInCurrentChat = []
 const username = 'lesoRoman'
-
 
 io.on('connection', socket => {
 	console.log('New User Connected', socket.id)
