@@ -31,7 +31,6 @@ app.use(
 			'https://our-chat-my.netlify.app',
 			'http://localhost:3000',
 			'http://localhost:3001',
-			'https://our-chat-my.netlify.app/',
 		],
 		optionsSuccessStatus: 200,
 	})
@@ -53,7 +52,6 @@ const io = new Server(httpServer, {
 			'https://our-chat-my.netlify.app',
 			'http://localhost:3000',
 			'http://localhost:3001',
-			'https://our-chat-my.netlify.app/',
 		],
 		optionsSuccessStatus: 200,
 	},
