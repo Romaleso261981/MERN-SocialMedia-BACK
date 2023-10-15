@@ -28,6 +28,7 @@ app.use(bodyParser.urlencoded({ limit: '30mb', extended: true }))
 app.use(
 	cors({
 		origin: [
+			'https://our-chat-app-two.vercel.app',
 			'https://our-chat-my.netlify.app',
 			'http://localhost:3000',
 			'http://localhost:3001',
@@ -49,6 +50,7 @@ const httpServer = http.createServer(app)
 const io = new Server(httpServer, {
 	cors: {
 		origin: [
+			'https://our-chat-app-two.vercel.app',
 			'https://our-chat-my.netlify.app',
 			'http://localhost:3000',
 			'http://localhost:3001',

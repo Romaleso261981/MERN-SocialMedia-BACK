@@ -1,9 +1,10 @@
 import express from 'express';
-import { GetRooms } from '../controllers/RoomsController.js';
+import { ctrlWrapper } from '../middleware/ctrlWrapper.js';
 
 const router = express.Router()
 
 
-router.get('/', GetRooms)
+router.get('/', ctrlWrapper(roomsController.GetRooms))
+roomsRouter.get('/:id', ctrlWrapper(roomsController.GetRoomById))
 
 export default router
