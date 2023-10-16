@@ -1,1 +1,1 @@
-# our-chat-app-api
+# MERN-SocialMedia-BACK
