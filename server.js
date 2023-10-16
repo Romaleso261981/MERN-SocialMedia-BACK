@@ -8,6 +8,7 @@ import http from 'http'
 import User from './models/userModel.js'
 import ChatModel from './models/chatModel.js'
 import { rooms } from './data/rooms.js'
+import { authRouter } from './routes/authRouter.js'
 
 // routes
 dotenv.config()
@@ -28,8 +29,7 @@ app.use(
 		optionsSuccessStatus: 200,
 	})
 )
-// app.use('/rooms', roomsRouter);
-
+app.use('/auth', authRouter);
 // Load environment variables
 const PORT = process.env.PORT || 3000
 const CONNECTION = process.env.MONGODB_CONNECTION

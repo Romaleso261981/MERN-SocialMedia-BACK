@@ -1,6 +1,6 @@
 import express from 'express';
-// import { authController } from "../controllers/authController.js";
-import { ctrlWrapper } from "../middlewares/ctrlWrapper.js";
+import { authController } from "../controllers/authController.js";
+import { ctrlWrapper } from "../middleware/ctrlWrapper.js";
 
 export const authRouter = express.Router();
 
