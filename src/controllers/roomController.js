@@ -2,6 +2,7 @@ import { ChatModel } from "../models/ChatModel.js"
 import { Rooms } from "../models/rooms.js"
 
 const GetRooms = async (req, res) => {
+	console.log("GetRooms")
 	let rooms = await Rooms.find().exec()
 
 	rooms = rooms.map(({ id, title, image, description }) => ({ id, title, image, description }))
@@ -14,6 +15,7 @@ const GetRooms = async (req, res) => {
 }
 const GetRoomById = async (req, res) => {
 	const { id } = req.params
+	console.log("GetRoomById", id)
 
 	if (id === "undefined" && id === "null") {
 		console.error("chat_id is not defined")

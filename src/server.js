@@ -52,7 +52,7 @@ app.use(errorsMidleware);
 const httpServer = http.createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: ['https://our-chat-app-two.vercel.app', 'http://localhost:3000', 'http://localhost:3001'],
+    origin: 'http://localhost:3000',
     optionsSuccessStatus: 200,
   },
 });
