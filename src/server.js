@@ -3,7 +3,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { Server } from 'socket.io';
+// import { Server } from 'socket.io';
 import http from 'http';
 import { dbConnect } from './services/dbConnect.js';
 
@@ -37,6 +37,13 @@ app.use(
   })
 );
 
+const io = require("socket.io")(8800, {
+  cors: {
+    origin: "http://localhost:3000",
+  },
+});
+
+
 app.use(express.static('public'));
 app.use('/images', express.static('images'));
 
@@ -47,14 +54,14 @@ app.use('/rooms', roomsRouter);
 app.use('/user', userRouter);
 
 // Necessary to resolve server crash when an error occurs
-app.use(errorsMidleware);
+// app.use(errorsMidleware);
 
-const httpServer = http.createServer(app);
-const io = new Server(httpServer, {
-  cors: {
-    origin: "http://localhost:3000",
-  },
-});
+// const httpServer = http.createServer(app);
+// const io = new Server(httpServer, {
+//   cors: {
+//     origin: "http://localhost:3000",
+//   },
+// });
 
 privateChatsRouter(io);
 roomsChatRouter(io);
