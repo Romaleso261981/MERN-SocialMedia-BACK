@@ -37,13 +37,14 @@ app.use(
 		optionsSuccessStatus: 200,
 	})
 )
-app.use(express.static('public'))
-app.use('/images', express.static('images'))
+// // routes
+app.use('/', globalRouter)
+app.use('/auth', authRouter)
+app.use('/rooms', roomsRouter)
+app.use('/user', userRouter)
 
-app.use('/', globalRouter);
-app.use('/auth', authRouter);
-app.use('/rooms', roomsRouter);
-app.use('/user', userRouter);
+// roomsChatRouter(io)
+// privateChatsRouter(io)
 
 // Load environment variables
 const PORT = process.env.PORT || 3000
