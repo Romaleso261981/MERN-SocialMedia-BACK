@@ -1,10 +1,10 @@
-import express from 'express';
-import { ctrlWrapper } from '../middleware/ctrlWrapper.js';
+// import express from 'express';
+// import { ctrlWrapper } from '../middleware/ctrlWrapper.js';
 
-const router = express.Router()
+// const router = express.Router()
 
 
-router.get('/', ctrlWrapper(roomsController.GetRooms))
-roomsRouter.get('/:id', ctrlWrapper(roomsController.GetRoomById))
+// router.get('/', ctrlWrapper(roomsController.GetRooms))
+// router.get('/:id', ctrlWrapper(roomsController.GetRoomById))
 
-export default router
+// export default router

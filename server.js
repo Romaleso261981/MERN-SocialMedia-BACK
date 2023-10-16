@@ -10,15 +10,6 @@ import ChatModel from './models/chatModel.js'
 import { rooms } from './data/rooms.js'
 
 // routes
-import {
-	globalRouter,
-	authRouter,
-	roomsRouter,
-	userRouter,
-	privateChatsRouter,
-	roomsChatRouter,
- } from './routes/index.js';
-
 dotenv.config()
 const app = express()
 // ... (використання middleware)
@@ -37,13 +28,7 @@ app.use(
 		optionsSuccessStatus: 200,
 	})
 )
-app.use(express.static('public'))
-app.use('/images', express.static('images'))
-
-app.use('/', globalRouter);
-app.use('/auth', authRouter);
-app.use('/rooms', roomsRouter);
-app.use('/user', userRouter);
+// app.use('/rooms', roomsRouter);
 
 // Load environment variables
 const PORT = process.env.PORT || 3000
