@@ -1,43 +1,47 @@
-import UserModel from '../models/userModel.js'
-import bcrypt from 'bcrypt'
-import jwt from 'jsonwebtoken'
-import ChatModel from '../models/chatModel.js'
-import User from '../models/userModel.js'
+import { Types } from 'mongoose';
+import { ApiError } from '../exceptions/ApiError.js';
+import { User } from '../models/user.js';
+import PrivatesList from '../models/userPrivate/privatesList.js';
+import privateServices from '../services/privateServices.js';
 
-// Register new user
-export const Signup = async (req, res) => {
-	const { userName, userMood } = req.body
-	console.log('userName', userName, 'userMood', userMood)
-	try {
+const ObjectId = Types.ObjectId;
 
-		const newUser = new UserModel({ userName, userMood })
-		// changed
-		await newUser.save()
+async function signup(req, res) {
+  const { userName, userMood } = req.body;
+  // TODO: Find a way to single of truth valid mood values there and in model
+  const validMood = [1, 2, 3, 4, 5];
 
-		res.status(200).json({ newUser })
-	} catch (error) {
-		res.status(500).json({ message: error.message })
-	}
+  if (Object.keys(req.body).length === 0) throw ApiError.BadRequest("Empty body of request.");
+
+  if (userName.trim().length < 2 || userName.trim().length >= 20) throw ApiError.NotValidData("The name must have at least 2 characters and 20 less.");
+
+  if (!userMood || !validMood.includes(userMood)) throw ApiError.NotValidData("No Mood selected");
+
+  const newUser = await User.create({
+    userName,
+    userMood,
+  })
+
+  return res.status(201).json({
+    code: 201,
+    newUser,
+  })
 }
-export const loginUser = async (req, res) => {
-	const { username, password } = req.body
 
-	try {
-		const user = await UserModel.findOne({ username: username })
+async function signin(req, res) {}
 
-		if (user) {
-			const validity = await bcrypt.compare(password, user.password)
+async function signout(req, res) {
+  const { userId } = req.params;
 
-			if (!validity) {
-				res.status(400).json('wrong password')
-			} else {
-				const token = jwt.sign({ username: user.username, id: user._id }, process.env.JWTKEY, { expiresIn: '1h' })
-				res.status(200).json({ user, token })
-			}
-		} else {
-			res.status(404).json('User not found')
-		}
-	} catch (err) {
-		res.status(500).json(err)
-	}
+  const chatList = (await PrivatesList.find({ users: { $in: ObjectId(userId)}})).map(chat => chat._id.toString());
+  chatList.forEach((chatId) => { privateServices.leaveChat(chatId, userId) });
+
+  await User.findByIdAndDelete(userId);
+  
+  return res.status(200).json({
+    code: 200,
+    status: 'OK'
+  });
 }
+
+export const authController = { signup, signin, signout };

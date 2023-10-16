@@ -1,5 +1,6 @@
-// import { roomsRouter } from './roomsRouter.js';
 
-// export {
-//   roomsRouter,
-// };
+
+export {
+  roomsRouter,
+  authRouter,
+};
