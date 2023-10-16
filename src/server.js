@@ -1,11 +1,11 @@
 import { errorsMidleware } from './middlewares/errorsMiddleware.js'
 import express from 'express'
 import bodyParser from 'body-parser'
-import cors from 'cors'
 import dotenv from 'dotenv'
 import { Server } from 'socket.io'
 import http from 'http'
 import { dbConnect } from './services/dbConnect.js'
+import cors from 'cors' // Додайте імпорт бібліотеки CORS
 
 // routes
 import {
@@ -22,25 +22,20 @@ const app = express()
 
 // Load environment variables
 const PORT = process.env.SERVER_PORT || 8880
-const startupDevMode = app.get('env') === 'development'
+
+const httpServer = http.createServer(app)
+const io = new Server(httpServer, {
+  cors: { // Додайте налаштування CORS для socket.io
+    origin: ['http://localhost:3000', 'https://our-chat-my.netlify.app'], // Вкажіть джерело, яке має мати доступ
+    methods: ['GET', 'POST'],
+  }
+})
 
 dbConnect()
 
 // Set up the express application
 app.use(bodyParser.json({ limit: '30mb', extended: true }))
 app.use(bodyParser.urlencoded({ limit: '30mb', extended: true }))
-app.use(
-	cors({
-		origin: [
-			'https://our-chat-app-two.vercel.app',
-			'https://our-chat-my.netlify.app',
-			'http://localhost:3000',
-			'http://localhost:3001',
-		],
-		credentials: true,
-		optionsSuccessStatus: 200,
-	})
-)
 
 app.use(express.static('public'))
 app.use('/images', express.static('images'))
@@ -51,23 +46,10 @@ app.use('/auth', authRouter)
 app.use('/rooms', roomsRouter)
 app.use('/user', userRouter)
 
+roomsChatRouter(io)
+privateChatsRouter(io)
+
 // Necessary to resolve server crash when an error occurs
 app.use(errorsMidleware)
-
-const httpServer = http.createServer(app)
-const io = new Server(httpServer, {
-	cors: {
-		origin: [
-			'https://our-chat-app-two.vercel.app',
-			'https://our-chat-my.netlify.app',
-			'http://localhost:3000',
-			'http://localhost:3001',
-		],
-		optionsSuccessStatus: 200,
-	},
-})
-
-privateChatsRouter(io)
-roomsChatRouter(io)
 
 httpServer.listen(PORT, () => console.log(`Listening at Port ${PORT}`))
